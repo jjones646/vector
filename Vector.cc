@@ -1,6 +1,6 @@
 // Implementation of the templated Vector class
 // ECE4893/8893 lab 3
-// YOUR NAME HERE
+// Jonathan Jones
 
 #include <iostream> // debugging
 #include "Vector.h"
