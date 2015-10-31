@@ -47,7 +47,7 @@ class Vector
   T&   Front() const;           // Return reference to first element
   T&   Back() const;            // Return reference to last element
   const T& operator[](size_t) const;// Return reference to specified element
-  T&   operator[](size_t);     // Return reference to specified (nonconst)
+  T& operator[](size_t);     // Return reference to specified (nonconst)
   // Metrics functions
   size_t Size() const;          // Return number of elements
   bool   Empty() const;         // True if empty

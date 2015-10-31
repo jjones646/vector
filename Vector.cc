@@ -27,6 +27,11 @@ Vector<T>& Vector<T>::operator=(const Vector& rhs)
 {
 }
 
+template <typename T>
+void Vector<T>::Reserve(size_t n)
+{
+}
+
 #ifdef GRAD_STUDENT
 // Other constructors
 template <typename T>
@@ -80,7 +85,12 @@ T& Vector<T>::Back() const
 }
 
 template <typename T>
-T& Vector<T>::operator[](size_t i) const
+const T& Vector<T>::operator[](size_t i) const
+{
+}
+
+template <typename T>
+T& Vector<T>::operator[](size_t i)
 {
 }
 
