@@ -19,7 +19,7 @@ void Test1(void)
   // elements with Push_Back and Push_Front.  Then retrieve
   // with only the indexing operator.  Allows destructor to clean up
   cout << "Starting Test1" << endl;
-  // Vector<String> vv(200, "Hello");
+  Vector<String> vv(200, "Hello");
   Vector<String> v;
 
   for (int i = 0; i < 50; ++i) {
@@ -40,9 +40,6 @@ void Test1(void)
   for (size_t i = 0; i < v.Size(); ++i) {
     cout << v[i] << endl;
   }
-
-  // Vector<String> v(2, "Hey");
-  // cout << v[0] << " " << v[1] << " " << v.Size() << endl;
 }
 
 void Test2(void)

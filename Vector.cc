@@ -51,10 +51,8 @@ void Vector<T>::Reserve(size_t n)
             reserved = n;
         } else {
             free(elements);
-            reserved = 0;
-            count = 0;
             cerr << "Error reallocating memory!" << endl;
-            exit(10);
+            exit(5);
         }
     }
 }
@@ -73,7 +71,7 @@ Vector<T>::Vector(size_t n) :
 
 // Constructor that copies a given type n number of times
 template <typename T>
-Vector<T>::Vector(size_t n, const T& t) :
+Vector<T>::Vector(size_t n, const T& v) :
     count(n),
     reserved(0),     // make sure we initialize reserved here
     elements(NULL)
@@ -82,10 +80,11 @@ Vector<T>::Vector(size_t n, const T& t) :
     Reserve(n);
 
     // call each's constructor & assign the memory location's value
-    for (size_t i = 0; i < count; ++i) {
-        new(&elements[i]) T();
-        elements[i] = t;
-    }
+    for (size_t i = 0; i < count; ++i)
+        new(&elements[i]) T(v);
+
+    // debugging
+    clog << "Init constructor called for " << n << " elements!" << endl;
 }
 #endif
 
@@ -97,6 +96,9 @@ Vector<T>::~Vector(void)
         (&elements[i])->~T();
 
     free(elements);
+
+    // debugging
+    clog << "Deconstructor called for " << count << " elements!" << endl;
 }
 
 // Add and access front and back
@@ -105,18 +107,11 @@ void Vector<T>::Push_Back(const T& e)
 {
     // allocate more memory if needed
     Reserve(++count);
-    // force call the constructor for the placed object
+    // force call the copy constructor for the placed object
     new(&elements[count - 1]) T(e);
-    // set the value in memory
-    // elements[count - 1] = e;
 
     // debugging
     clog << "Push_Back\tcount=" << count << endl;
-
-    // for (size_t i = 0; i < count; ++i)
-    //     clog << elements[i] << endl;
-
-    // clog << endl;
 }
 
 template <typename T>
@@ -138,15 +133,8 @@ void Vector<T>::Push_Front(const T& e)
     // force call the constructor for moving everything down by 1
     new(&elements[0]) T(e);
 
-    // set the front value in memory
-    // elements[0] = e;
-
     // debugging
     clog << "Push_Front\tcount=" << count << endl;
-    // for (size_t i = 0; i < count; ++i)
-    //     clog << elements[i] << endl;
-
-    // clog << endl;
 }
 
 template <typename T>
