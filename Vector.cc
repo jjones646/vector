@@ -11,10 +11,10 @@ using namespace std;
 
 // Default constructor
 template <typename T>
-Vector<T>::Vector(void) :
+Vector<T>::Vector() :
     count(0),
     reserved(0),
-    elements(static_cast<T*>(NULL)) {}
+    elements(NULL) {}
 
 // Copy constructor
 template <typename T>
@@ -37,41 +37,25 @@ Vector<T>::Vector(const Vector& v) :
 template <typename T>
 Vector<T>& Vector<T>::operator=(const Vector& v)
 {
-
+    cout << "ASSIGNMENT OPERATOR CALLED!!" << endl;
 }
 
 template <typename T>
 void Vector<T>::Reserve(size_t n)
 {
     if (n > reserved) {
-        T* nelems = static_cast<T*>(realloc(elements, n * sizeof(T)));
-        // cout << *nelems << endl;
+        T* nelems = (T*)realloc(elements, n * sizeof(T));
 
         if (nelems != NULL) {
             cout << "Reserving " << n << " spaces." << endl;
             elements = nelems;
             reserved = n;
         } else {
-            // // try again, this time forcing a different block of the heap
-            // nelems = static_cast<T*>(malloc(n * sizeof(T)));
-
-            // if (nelems != NULL) {
-            //     // copy the contents over
-            //     for (size_t i = 0; i < count; ++i)
-            //         nelems[i] = elements[i];
-
-            //     // free our pointer and reassign it
-            //     free(elements);
-            //     elements = nelems;
-            //     reserved = n;
-
-            // } else {
             free(elements);
             reserved = 0;
             count = 0;
             cerr << "Error reallocating memory!" << endl;
-            // exit(10);
-            // }
+            exit(10);
         }
     }
 }
@@ -107,6 +91,8 @@ Vector<T>::Vector(size_t n, const T& t) :
 template <typename T>
 Vector<T>::~Vector(void)
 {
+    count = 0;
+    reserved = 0;
     free(elements);
 }
 
@@ -223,6 +209,7 @@ VectorIterator<T> Vector<T>::Begin(void) const
 template <typename T>
 VectorIterator<T> Vector<T>::End(void) const
 {
+    return VectorIterator<T>(&elements[count - 1]);
 }
 
 #ifdef GRAD_STUDENT
@@ -273,7 +260,6 @@ VectorIterator<T>  VectorIterator<T>::operator++()
 template <typename T>
 VectorIterator<T> VectorIterator<T>::operator++(int)
 {
-    ;
 }
 
 // Comparison operators
