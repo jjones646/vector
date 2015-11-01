@@ -26,28 +26,27 @@ Vector<T>::Vector(const Vector& v) :
     // allocate the correct amount of memory
     Reserve(count);
 
-    // copy over the elements
+    // copy over the elements by it's own copy constructor
     for (size_t i = 0; i < count; ++i)
-        elements[i] = v[i];
+        new(&elements[i]) T(v[i]);
 
-    cout << "Copy constructor called for size of " << count << endl;
+    clog << "Copy constructor called for size of " << count << endl;
 }
 
 // Assignment operator
 template <typename T>
 Vector<T>& Vector<T>::operator=(const Vector& v)
 {
-    cout << "ASSIGNMENT OPERATOR CALLED!!" << endl;
+    clog << "ASSIGNMENT OPERATOR CALLED!!" << endl;
 }
 
 template <typename T>
 void Vector<T>::Reserve(size_t n)
 {
     if (n > reserved) {
-        T* nelems = (T*)realloc(elements, n * sizeof(T));
+        T* nelems = static_cast<T*>(realloc(elements, n * sizeof(T)));
 
         if (nelems != NULL) {
-            cout << "Reserving " << n << " spaces." << endl;
             elements = nelems;
             reserved = n;
         } else {
@@ -82,8 +81,11 @@ Vector<T>::Vector(size_t n, const T& t) :
     // Initialize with "n" copies of "t"
     Reserve(n);
 
-    for (size_t i = 0; i < count; ++i)
+    // call each's constructor & assign the memory location's value
+    for (size_t i = 0; i < count; ++i) {
+        new(&elements[i]) T();
         elements[i] = t;
+    }
 }
 #endif
 
@@ -91,8 +93,9 @@ Vector<T>::Vector(size_t n, const T& t) :
 template <typename T>
 Vector<T>::~Vector(void)
 {
-    count = 0;
-    reserved = 0;
+    for (size_t i = 0; i < count; ++i)
+        (&elements[i])->~T();
+
     free(elements);
 }
 
@@ -100,52 +103,76 @@ Vector<T>::~Vector(void)
 template <typename T>
 void Vector<T>::Push_Back(const T& e)
 {
-    // allocate more memory
+    // allocate more memory if needed
     Reserve(++count);
-
+    // force call the constructor for the placed object
+    new(&elements[count - 1]) T(e);
     // set the value in memory
-    elements[count - 1] = e;
+    // elements[count - 1] = e;
 
-    for (size_t i = 0; i < count; ++i)
-        cout << elements[i] << endl;
+    // debugging
+    clog << "Push_Back\tcount=" << count << endl;
 
-    cout << endl;
+    // for (size_t i = 0; i < count; ++i)
+    //     clog << elements[i] << endl;
+
+    // clog << endl;
 }
 
 template <typename T>
 void Vector<T>::Push_Front(const T& e)
 {
-    count++;
-
-    if (count > reserved) {
-        // allocate more memory
-        Reserve(count);
-    }
+    // allocate more memory if needed
+    Reserve(++count);
 
     // move everything up by 1 position
-    for (size_t i = 0; i < count; ++i)
-        elements[i + 1] = elements[i];
+    // starting at the end and working our way to the front here
+    for (size_t i = count - 1; i > 0; --i) {
+        // construct the new object by using its copy constructor
+        // for the new location
+        new(&elements[i]) T(elements[i - 1]);
+        // call the deconstructor for it's previous location
+        (&elements[i - 1])->~T();
+    }
+
+    // force call the constructor for moving everything down by 1
+    new(&elements[0]) T(e);
 
     // set the front value in memory
-    elements[0] = e;
+    // elements[0] = e;
+
+    // debugging
+    clog << "Push_Front\tcount=" << count << endl;
+    // for (size_t i = 0; i < count; ++i)
+    //     clog << elements[i] << endl;
+
+    // clog << endl;
 }
 
 template <typename T>
 void Vector<T>::Pop_Back(void)
 {
-    // Remove last element by simply changing our max index value
-    count--;
+    // Remove last element by calling its deconstructor
+    // and decrementing our count value
+    (&elements[--count])->~T();
 }
 
 template <typename T>
 void Vector<T>::Pop_Front(void)
 {
-    // Remove first element by decrementing the max index value
-    count--;
+    // move everything down by 1 position
+    // starting at the front and working our way to the back here
+    for (size_t i = 0; i < count - 1; ++i) {
+        // call the deconstructor for the current location
+        (&elements[i])->~T();
+        // construct the new object by using its copy constructor
+        // using the next indexed location
+        new(&elements[i]) T(elements[i + 1]);
+    }
 
-    // then moving everything down by 1
-    for (size_t i = 0; i < count; ++i)
-        elements[i] = elements[i + 1];
+    // deconstruct the last object in the memory array
+    // and decrement our count value
+    (&elements[count--])->~T();
 }
 
 // Element Access
