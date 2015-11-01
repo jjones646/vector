@@ -1,5 +1,5 @@
-// ECE4893/8893 Assignment 3
-//  Georgia Tech, Fall 2011
+// ECE4122/6122 Assignment 5
+// Georgia Tech, Fall 2015
 
 // Students should NOT hae to change this, excepting
 // commenting out the GRAD_STUDENT definition (for undergrads)
@@ -7,7 +7,6 @@
 // that stores a variable number of elements of arbitrary
 // type T.
 
-// First is the "include guard
 #ifndef __VECTOR_H__
 #define __VECTOR_H__
 
@@ -22,7 +21,7 @@ template <typename T> class VectorIterator;
 template <typename T>
 class Vector
 {
- public:
+public:
   // Define the iterator type based on VectorIterator below
   // Construcors
   Vector();                     // Default constructor
@@ -71,9 +70,9 @@ private:
 
 // Define the VectorIterator class
 template <typename T>
-class VectorIterator 
+class VectorIterator
 {
- public:
+public:
   // Define your iterator constructor here
   VectorIterator();
   VectorIterator(T*);
@@ -82,12 +81,12 @@ class VectorIterator
   // Note we are not implementing the "arrow" (->) operator
   // Note we are not implementing the decrementing operators
   T& operator*() const;
-  VectorIterator operator++();          // Prefix increment  
+  VectorIterator operator++();          // Prefix increment
   VectorIterator operator++(int);        // Postfix increment
   // Comparison operators
   bool operator !=(const VectorIterator&) const;
   bool operator ==(const VectorIterator&) const;
- private:
+private:
   //Member variables
   T* current;
   // Allow the Vector class access to private members
