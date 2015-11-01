@@ -160,7 +160,7 @@ void Vector<T>::Pop_Front(void)
 
     // deconstruct the last object in the memory array
     // and decrement our count value
-    (&elements[count--])->~T();
+    (&elements[--count])->~T();
 }
 
 // Element Access
@@ -209,6 +209,9 @@ bool Vector<T>::Empty(void) const
 template <typename T>
 void Vector<T>::Clear(void)
 {
+    for (size_t i = 0; i < count; ++i)
+        (&elements[i])->~T();
+
     count = 0;
 }
 
@@ -224,7 +227,7 @@ VectorIterator<T> Vector<T>::Begin(void) const
 template <typename T>
 VectorIterator<T> Vector<T>::End(void) const
 {
-    return VectorIterator<T>(&elements[count - 1]);
+    return VectorIterator<T>(&elements[count]);
 }
 
 #ifdef GRAD_STUDENT
@@ -232,11 +235,13 @@ VectorIterator<T> Vector<T>::End(void) const
 template <typename T>
 void Vector<T>::Erase(const VectorIterator<T>& it)
 {
+
 }
 
 template <typename T>
-void Vector<T>::Insert(const T& rhs, const VectorIterator<T>& it)
+void Vector<T>::Insert(const T& v, const VectorIterator<T>& it)
 {
+
 }
 #endif
 
@@ -245,45 +250,50 @@ void Vector<T>::Insert(const T& rhs, const VectorIterator<T>& it)
 // Constructors
 template <typename T>
 VectorIterator<T>::VectorIterator()
-{
-}
+{}
 
 template <typename T>
-VectorIterator<T>::VectorIterator(T* c)
-{
-}
+VectorIterator<T>::VectorIterator(T* c) :
+    current(c) {}
 
 // Copy constructor
 template <typename T>
-VectorIterator<T>::VectorIterator(const VectorIterator<T>& rhs)
-{
-}
+VectorIterator<T>::VectorIterator(const VectorIterator<T>& it) :
+    current(it.current) {}
 
 // Iterator defeferencing operator
 template <typename T>
 T& VectorIterator<T>::operator*() const
 {
+    return *current;
 }
 
 // Prefix increment
 template <typename T>
 VectorIterator<T>  VectorIterator<T>::operator++()
 {
+    *current++;
+    return *this;
 }
 
 // Postfix increment
 template <typename T>
 VectorIterator<T> VectorIterator<T>::operator++(int)
 {
+    VectorIterator<T> tmp = *this;
+    ++*this;
+    return tmp;
 }
 
 // Comparison operators
 template <typename T>
-bool VectorIterator<T>::operator !=(const VectorIterator<T>& rhs) const
+bool VectorIterator<T>::operator !=(const VectorIterator<T>& it) const
 {
+    return current != it.current;
 }
 
 template <typename T>
-bool VectorIterator<T>::operator ==(const VectorIterator<T>& rhs) const
+bool VectorIterator<T>::operator ==(const VectorIterator<T>& it) const
 {
+    return current == it.current;
 }
