@@ -2,12 +2,11 @@
 // ECE4122/6122 Lab 5
 // Jonathan Jones
 
-#include <iostream> // debugging
+#include <iostream>
 #include "Vector.h"
 
-// Your implementation here
-// Fill in all the necessary functions below
 using namespace std;
+
 
 // Default constructor
 template <typename T>
@@ -16,29 +15,32 @@ Vector<T>::Vector() :
     reserved(0),
     elements(NULL) {}
 
+
 // Copy constructor
 template <typename T>
 Vector<T>::Vector(const Vector& v) :
     count(v.Size()),
-    reserved(0),    // make sure we initialize reserved here
+    reserved(0),
     elements(NULL)
 {
-    // allocate the correct amount of memory
-    Reserve(count);
-
-    // copy over the elements by it's own copy constructor
-    for (size_t i = 0; i < count; ++i)
-        new(&elements[i]) T(v[i]);
-
-    clog << "Copy constructor called for size of " << count << endl;
+    *this = v;
 }
+
 
 // Assignment operator
 template <typename T>
 Vector<T>& Vector<T>::operator=(const Vector& v)
 {
-    clog << "ASSIGNMENT OPERATOR CALLED!!" << endl;
+    // allocate enough space for the new vector
+    Reserve(v.Size());
+
+    // copy over the elements by it's own copy constructor
+    for (size_t i = 0; i < count; ++i)
+        new(&elements[i]) T(v[i]);
+
+    return *this;
 }
+
 
 template <typename T>
 void Vector<T>::Reserve(size_t n)
@@ -57,7 +59,9 @@ void Vector<T>::Reserve(size_t n)
     }
 }
 
+
 #ifdef GRAD_STUDENT
+
 // Other constructors
 template <typename T>
 Vector<T>::Vector(size_t n) :
@@ -68,6 +72,7 @@ Vector<T>::Vector(size_t n) :
     // Initialize with reserved memory
     Reserve(n);
 }
+
 
 // Constructor that copies a given type n number of times
 template <typename T>
@@ -82,11 +87,10 @@ Vector<T>::Vector(size_t n, const T& v) :
     // call each's constructor & assign the memory location's value
     for (size_t i = 0; i < count; ++i)
         new(&elements[i]) T(v);
-
-    // debugging
-    clog << "Init constructor called for " << n << " elements!" << endl;
 }
+
 #endif
+
 
 // Destructor
 template <typename T>
@@ -96,10 +100,8 @@ Vector<T>::~Vector(void)
         (&elements[i])->~T();
 
     free(elements);
-
-    // debugging
-    clog << "Deconstructor called for " << count << " elements!" << endl;
 }
+
 
 // Add and access front and back
 template <typename T>
@@ -109,10 +111,8 @@ void Vector<T>::Push_Back(const T& e)
     Reserve(++count);
     // force call the copy constructor for the placed object
     new(&elements[count - 1]) T(e);
-
-    // debugging
-    clog << "Push_Back\tcount=" << count << endl;
 }
+
 
 template <typename T>
 void Vector<T>::Push_Front(const T& e)
@@ -132,10 +132,8 @@ void Vector<T>::Push_Front(const T& e)
 
     // force call the constructor for moving everything down by 1
     new(&elements[0]) T(e);
-
-    // debugging
-    clog << "Push_Front\tcount=" << count << endl;
 }
+
 
 template <typename T>
 void Vector<T>::Pop_Back(void)
@@ -144,6 +142,7 @@ void Vector<T>::Pop_Back(void)
     // and decrementing our count value
     (&elements[--count])->~T();
 }
+
 
 template <typename T>
 void Vector<T>::Pop_Front(void)
@@ -163,12 +162,14 @@ void Vector<T>::Pop_Front(void)
     (&elements[--count])->~T();
 }
 
+
 // Element Access
 template <typename T>
 T& Vector<T>::Front(void) const
 {
     return elements[0];
 }
+
 
 // Element Access
 template <typename T>
@@ -177,12 +178,14 @@ T& Vector<T>::Back(void) const
     return elements[count - 1];
 }
 
+
 // vector indexing
 template <typename T>
 const T& Vector<T>::operator[](size_t i) const
 {
     return const_cast<T&>(elements[i]);
 }
+
 
 // vector indexing
 template <typename T>
@@ -191,6 +194,7 @@ T& Vector<T>::operator[](size_t i)
     return elements[i];
 }
 
+
 // return's the number of elements that have been added
 template <typename T>
 size_t Vector<T>::Size(void) const
@@ -198,12 +202,14 @@ size_t Vector<T>::Size(void) const
     return count;
 }
 
+
 // returns true if empty
 template <typename T>
 bool Vector<T>::Empty(void) const
 {
     return count == 0;
 }
+
 
 // Implement clear
 template <typename T>
@@ -216,7 +222,6 @@ void Vector<T>::Clear(void)
 }
 
 
-
 // Iterator access functions
 template <typename T>
 VectorIterator<T> Vector<T>::Begin(void) const
@@ -224,13 +229,16 @@ VectorIterator<T> Vector<T>::Begin(void) const
     return VectorIterator<T>(elements);
 }
 
+
 template <typename T>
 VectorIterator<T> Vector<T>::End(void) const
 {
     return VectorIterator<T>(&elements[count]);
 }
 
+
 #ifdef GRAD_STUDENT
+
 // Erase and insert
 template <typename T>
 void Vector<T>::Erase(const VectorIterator<T>& it)
@@ -238,28 +246,33 @@ void Vector<T>::Erase(const VectorIterator<T>& it)
 
 }
 
+
 template <typename T>
 void Vector<T>::Insert(const T& v, const VectorIterator<T>& it)
 {
 
 }
+
 #endif
 
-// Implement the iterators
 
+// Implement the iterators
 // Constructors
 template <typename T>
 VectorIterator<T>::VectorIterator()
 {}
 
+
 template <typename T>
 VectorIterator<T>::VectorIterator(T* c) :
     current(c) {}
+
 
 // Copy constructor
 template <typename T>
 VectorIterator<T>::VectorIterator(const VectorIterator<T>& it) :
     current(it.current) {}
+
 
 // Iterator defeferencing operator
 template <typename T>
@@ -268,6 +281,7 @@ T& VectorIterator<T>::operator*() const
     return *current;
 }
 
+
 // Prefix increment
 template <typename T>
 VectorIterator<T>  VectorIterator<T>::operator++()
@@ -275,6 +289,7 @@ VectorIterator<T>  VectorIterator<T>::operator++()
     *current++;
     return *this;
 }
+
 
 // Postfix increment
 template <typename T>
@@ -285,12 +300,14 @@ VectorIterator<T> VectorIterator<T>::operator++(int)
     return tmp;
 }
 
+
 // Comparison operators
 template <typename T>
 bool VectorIterator<T>::operator !=(const VectorIterator<T>& it) const
 {
     return current != it.current;
 }
+
 
 template <typename T>
 bool VectorIterator<T>::operator ==(const VectorIterator<T>& it) const
