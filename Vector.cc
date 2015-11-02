@@ -267,22 +267,16 @@ void Vector<T>::Insert(const T & v, const VectorIterator<T>& it)
     // starting at the iterator and working our way to the back
     T prv(v);
     T nxt(*it_tmp);
-    T* nxtP = &*it_tmp;
     while (it_tmp != End()) {
         nxt = *it_tmp;
-        (nxtP)->~T();
-        new (nxtP) T(prv);
+        (&*it_tmp)->~T();
+        new (&*it_tmp) T(prv);
         prv = nxt;
         // increment
         it_tmp++;
-        // store next pointer
-        nxtP = &*it_tmp;
     }
-    // Make sure we have enough reserved space for the new element that was placed
-    Reserve(++count);
-    // Store the last element back making sure we use the elements member for finding out
-    // the address here since the memory block could have changed with the previous call
-    new (&elements[count - 1]) T(prv);
+    // push the last element back onto the vector
+    Push_Back(prv);
 }
 
 #endif
