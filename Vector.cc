@@ -36,7 +36,7 @@ Vector<T>& Vector<T>::operator=(const Vector& v)
 
     // copy over the elements by it's own copy constructor
     for (size_t i = 0; i < count; ++i)
-        new(&elements[i]) T(v[i]);
+        new (&elements[i]) T(v[i]);
 
     return *this;
 }
@@ -66,7 +66,7 @@ void Vector<T>::Reserve(size_t n)
 template <typename T>
 Vector<T>::Vector(size_t n) :
     count(0),
-    reserved(0),     // make sure we initialize reserved here
+    reserved(0),
     elements(NULL)
 {
     // Initialize with reserved memory
@@ -78,7 +78,7 @@ Vector<T>::Vector(size_t n) :
 template <typename T>
 Vector<T>::Vector(size_t n, const T& v) :
     count(n),
-    reserved(0),     // make sure we initialize reserved here
+    reserved(0),
     elements(NULL)
 {
     // Initialize with "n" copies of "t"
@@ -86,7 +86,7 @@ Vector<T>::Vector(size_t n, const T& v) :
 
     // call each's constructor & assign the memory location's value
     for (size_t i = 0; i < count; ++i)
-        new(&elements[i]) T(v);
+        new (&elements[i]) T(v);
 }
 
 #endif
@@ -110,7 +110,7 @@ void Vector<T>::Push_Back(const T& e)
     // allocate more memory if needed
     Reserve(++count);
     // force call the copy constructor for the placed object
-    new(&elements[count - 1]) T(e);
+    new (&elements[count - 1]) T(e);
 }
 
 
@@ -121,17 +121,17 @@ void Vector<T>::Push_Front(const T& e)
     Reserve(++count);
 
     // move everything up by 1 position
-    // starting at the end and working our way to the front here
+    // starting at the end and working our way to the front
     for (size_t i = count - 1; i > 0; --i) {
         // construct the new object by using its copy constructor
         // for the new location
-        new(&elements[i]) T(elements[i - 1]);
+        new (&elements[i]) T(elements[i - 1]);
         // call the deconstructor for it's previous location
         (&elements[i - 1])->~T();
     }
 
-    // force call the constructor for moving everything down by 1
-    new(&elements[0]) T(e);
+    // force call the constructor for our added element
+    new (&elements[0]) T(e);
 }
 
 
@@ -148,13 +148,13 @@ template <typename T>
 void Vector<T>::Pop_Front(void)
 {
     // move everything down by 1 position
-    // starting at the front and working our way to the back here
+    // starting at the front and working our way to the back
     for (size_t i = 0; i < count - 1; ++i) {
         // call the deconstructor for the current location
         (&elements[i])->~T();
         // construct the new object by using its copy constructor
         // using the next indexed location
-        new(&elements[i]) T(elements[i + 1]);
+        new (&elements[i]) T(elements[i + 1]);
     }
 
     // deconstruct the last object in the memory array
@@ -226,6 +226,7 @@ void Vector<T>::Clear(void)
 template <typename T>
 VectorIterator<T> Vector<T>::Begin(void) const
 {
+    // this points to the address after the last element
     return VectorIterator<T>(elements);
 }
 
@@ -243,14 +244,45 @@ VectorIterator<T> Vector<T>::End(void) const
 template <typename T>
 void Vector<T>::Erase(const VectorIterator<T>& it)
 {
-
+    VectorIterator<T> it_tmp(it);
+    // decrement our element count
+    count--;
+    // move all of the elements down to fill in the gap
+    while (it_tmp != End()) {
+        T* elem = &*it_tmp;
+        it_tmp++;
+        (elem)->~T();
+        new (elem) T(*it_tmp);
+    }
 }
 
 
 template <typename T>
-void Vector<T>::Insert(const T& v, const VectorIterator<T>& it)
+void Vector<T>::Insert(const T & v, const VectorIterator<T>& it)
 {
+    // get a temporary iterator that initially points to the end of the vector
+    VectorIterator<T> it_tmp(it);
 
+    // move everything up by 1 position
+    // starting at the iterator and working our way to the back
+    T prv(v);
+    T nxt;
+    T* nxtP = &*it_tmp;
+    while (it_tmp != End()) {
+        nxt = *it_tmp;
+        (nxtP)->~T();
+        new (nxtP) T(prv);
+        prv = nxt;
+        // increment
+        it_tmp++;
+        // store next pointer
+        nxtP = &*it_tmp;
+    }
+    // Make sure we have enough reserved space for the new element that was placed
+    Reserve(++count);
+    // Store the last element back making sure we use the elements member for finding out
+    // the address here since the memory block could have changed with the previous call
+    new (&elements[count - 1]) T(prv);
 }
 
 #endif
@@ -259,12 +291,11 @@ void Vector<T>::Insert(const T& v, const VectorIterator<T>& it)
 // Implement the iterators
 // Constructors
 template <typename T>
-VectorIterator<T>::VectorIterator()
-{}
+VectorIterator<T>::VectorIterator() {}
 
 
 template <typename T>
-VectorIterator<T>::VectorIterator(T* c) :
+VectorIterator<T>::VectorIterator(T * c) :
     current(c) {}
 
 
@@ -284,7 +315,7 @@ T& VectorIterator<T>::operator*() const
 
 // Prefix increment
 template <typename T>
-VectorIterator<T>  VectorIterator<T>::operator++()
+VectorIterator<T> VectorIterator<T>::operator++()
 {
     *current++;
     return *this;
