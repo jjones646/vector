@@ -61,7 +61,7 @@ void Vector<T>::Reserve(size_t n)
 
 
 #ifdef GRAD_STUDENT
-
+// ================================================================
 // Other constructors
 template <typename T>
 Vector<T>::Vector(size_t n) :
@@ -88,7 +88,7 @@ Vector<T>::Vector(size_t n, const T& v) :
     for (size_t i = 0; i < count; ++i)
         new (&elements[i]) T(v);
 }
-
+// ================================================================
 #endif
 
 
@@ -239,7 +239,7 @@ VectorIterator<T> Vector<T>::End(void) const
 
 
 #ifdef GRAD_STUDENT
-
+// ================================================================
 // Erase and insert
 template <typename T>
 void Vector<T>::Erase(const VectorIterator<T>& it)
@@ -280,7 +280,7 @@ void Vector<T>::Insert(const T& v, const VectorIterator<T>& it)
     // push the last element back onto the vector
     Push_Back(prv);
 }
-
+// ================================================================
 #endif
 
 
