@@ -261,27 +261,50 @@ template <typename T>
 void Vector<T>::Insert(const T& v, const VectorIterator<T>& it)
 {
     // get a temporary iterator that initially points to the end of the vector
-    VectorIterator<T> it_tmp(it);
+    // VectorIterator<T> it_tmp(it);
 
-    // move everything up by 1 position
-    // starting at the iterator and working our way to the back
-    T prv(v);
-    T nxt(*it_tmp);
-    while (it_tmp != End()) {
-        nxt = *it_tmp;
-        (&*it_tmp)->~T();
-        new (&*it_tmp) T(prv);
-        prv = nxt;
-        // increment
-        it_tmp++;
-    }
-    // push the last element back onto the vector
-    Push_Back(prv);
-    it_tmp = it;
-    cout << *it_tmp++ << endl;
-    cout << *it_tmp << endl;
-    cout << *(++it_tmp) << endl;
-    cout << *it_tmp << endl;
+    // // move everything up by 1 position
+    // // starting at the iterator and working our way to the back
+    // T prv(v);
+    // T nxt(*it_tmp);
+    // while (it_tmp != End()) {
+    //     nxt = *it_tmp;
+    //     (&*it_tmp)->~T();
+    //     new (&*it_tmp) T(prv);
+    //     prv = nxt;
+    //     // increment
+    //     it_tmp++;
+    // }
+    // // push the last element back onto the vector
+    // Push_Back(prv);
+
+    VectorIterator<T> it_tmp(Begin());
+    Vector<T> v_tmp;
+
+    while (it_tmp != it)
+        v_tmp.Push_Back(*(it_tmp++));
+
+    v_tmp.Push_Back(v);
+
+    while (it_tmp != End())
+        v_tmp.Push_Back(*(it_tmp++));
+
+    // this->~Vector();
+    for (size_t i = 0; i < Size(); ++i)
+        Pop_Back();
+
+
+    for (size_t i = 0; i < v_tmp.Size(); ++i)
+        Push_Back(v_tmp[i]);
+
+    // *this = v_tmp;
+
+
+    // it_tmp = it;
+    // cout << *it_tmp++ << endl;
+    // cout << *it_tmp << endl;
+    // cout << *(++it_tmp) << endl;
+    // cout << *it_tmp << endl;
 }
 
 #endif
@@ -294,7 +317,7 @@ VectorIterator<T>::VectorIterator() {}
 
 
 template <typename T>
-VectorIterator<T>::VectorIterator(T * c) :
+VectorIterator<T>::VectorIterator(T* c) :
     current(c) {}
 
 
