@@ -254,6 +254,8 @@ void Vector<T>::Erase(const VectorIterator<T>& it)
         (elem)->~T();
         new (elem) T(*it_tmp);
     }
+    // erase the last element that has already been reconstructed
+    (&*it_tmp)->~T();
 }
 
 
@@ -289,22 +291,11 @@ void Vector<T>::Insert(const T& v, const VectorIterator<T>& it)
     while (it_tmp != End())
         v_tmp.Push_Back(*(it_tmp++));
 
-    // this->~Vector();
     for (size_t i = 0; i < Size(); ++i)
         Pop_Back();
 
-
     for (size_t i = 0; i < v_tmp.Size(); ++i)
         Push_Back(v_tmp[i]);
-
-    // *this = v_tmp;
-
-
-    // it_tmp = it;
-    // cout << *it_tmp++ << endl;
-    // cout << *it_tmp << endl;
-    // cout << *(++it_tmp) << endl;
-    // cout << *it_tmp << endl;
 }
 
 #endif
