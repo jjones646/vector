@@ -258,7 +258,7 @@ void Vector<T>::Erase(const VectorIterator<T>& it)
 
 
 template <typename T>
-void Vector<T>::Insert(const T & v, const VectorIterator<T>& it)
+void Vector<T>::Insert(const T& v, const VectorIterator<T>& it)
 {
     // get a temporary iterator that initially points to the end of the vector
     VectorIterator<T> it_tmp(it);
@@ -277,6 +277,11 @@ void Vector<T>::Insert(const T & v, const VectorIterator<T>& it)
     }
     // push the last element back onto the vector
     Push_Back(prv);
+    it_tmp = it;
+    cout << *it_tmp++ << endl;
+    cout << *it_tmp << endl;
+    cout << *(++it_tmp) << endl;
+    cout << *it_tmp << endl;
 }
 
 #endif
@@ -320,7 +325,7 @@ VectorIterator<T> VectorIterator<T>::operator++()
 template <typename T>
 VectorIterator<T> VectorIterator<T>::operator++(int)
 {
-    VectorIterator<T> tmp = *this;
+    VectorIterator<T> tmp(*this);
     ++*this;
     return tmp;
 }
