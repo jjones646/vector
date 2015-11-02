@@ -266,7 +266,7 @@ void Vector<T>::Insert(const T & v, const VectorIterator<T>& it)
     // move everything up by 1 position
     // starting at the iterator and working our way to the back
     T prv(v);
-    T nxt;
+    T nxt(*it_tmp);
     T* nxtP = &*it_tmp;
     while (it_tmp != End()) {
         nxt = *it_tmp;
