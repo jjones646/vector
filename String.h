@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-class String 
+class String
 {
 public:
   String();                // Default constructor

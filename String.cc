@@ -35,10 +35,10 @@ String::String(const String& st0)
   : st(0)
 {
   if (st0.c_str() != 0)
-    { // Not Null string on rhs
-      st = (char*)malloc(strlen(st0.c_str()) + 1);
-      strcpy(st, st0.c_str());
-    }
+  { // Not Null string on rhs
+    st = (char*)malloc(strlen(st0.c_str()) + 1);
+    strcpy(st, st0.c_str());
+  }
   CopyCount++;
 }
 
@@ -54,12 +54,12 @@ String& String::operator=(const String& rhs)
 {
   // Insure not self assignment
   if (&rhs != this)
-    {
-      // Free original string
-      free(st);
-      st = (char*)malloc(strlen(rhs.c_str()) + 1);
-      strcpy(st, rhs.c_str());
-    }
+  {
+    // Free original string
+    free(st);
+    st = (char*)malloc(strlen(rhs.c_str()) + 1);
+    strcpy(st, rhs.c_str());
+  }
   AssignCount++;
   return *this;
 }
