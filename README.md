@@ -18,3 +18,8 @@ Then you can run the program and check the results for accuracy.
 # Check against the minimum expected results
 vimdiff testVec-expected-output.txt output-results.txt
 ```
+
+To check the compiled program against memory leaks, use `valgrind`.
+```
+valgrind --leak-check=full ./testVec
+```

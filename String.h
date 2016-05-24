@@ -1,10 +1,8 @@
+#pragma once
+
 // Define a variable length string class
 // ECE4893/8893 Fall 2012
 // George F. Riley
-
-// First the "include guard
-#ifndef __STRING_H__
-#define __STRING_H__
 
 #include <iostream>
 
@@ -30,9 +28,7 @@ public:
   static int CopyCount;
   static int AssignCount;
   static int DestructCount;
-
 };
 
 // Define a non-member printing function
 std::ostream& operator<<(std::ostream&, const String& st);
-#endif

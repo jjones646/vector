@@ -1,3 +1,5 @@
+#pragma once
+
 // ECE4122/6122 Assignment 5
 // Georgia Tech, Fall 2015
 
@@ -6,9 +8,6 @@
 // This is the definition of the templated "Vector" class
 // that stores a variable number of elements of arbitrary
 // type T.
-
-#ifndef __VECTOR_H__
-#define __VECTOR_H__
 
 // unistd.h is needed for size_t
 #include <unistd.h>
@@ -92,5 +91,3 @@ private:
   // Allow the Vector class access to private members
   friend class Vector<T>;
 };
-
-#endif
